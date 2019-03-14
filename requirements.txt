@@ -8,7 +8,7 @@ marshmallow-sqlalchemy
 flask-migrate
 mixer
 python-slugify
-markdown
+markdown==2.6.11
 slugify
 selenium
 xvfbwrapper
