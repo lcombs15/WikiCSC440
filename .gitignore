@@ -123,3 +123,6 @@ dmypy.json
 .pyre/
 
 .idea
+
+# Configuration
+config.py
