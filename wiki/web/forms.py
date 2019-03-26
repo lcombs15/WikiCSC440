@@ -7,7 +7,6 @@ from wtforms import BooleanField
 from wtforms import TextField
 from wtforms import TextAreaField
 from wtforms import PasswordField
-from wtforms import HiddenField
 from wtforms.validators import InputRequired
 from wtforms.validators import ValidationError
 
@@ -74,9 +73,6 @@ class ChangePasswordForm(Form):
     def validate_verify_new(form, field):
         if form.new_password.data != field.data:
             raise ValidationError("New password does not match")
-
-    #def validate_old_password(self, form, field):
-            #raise ValidationError("Username and password do not match.")
 
 
 
