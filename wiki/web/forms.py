@@ -63,6 +63,11 @@ class ChangePasswordForm(Form):
     new_password = PasswordField('', [InputRequired()])
     verify_new = PasswordField('', [InputRequired()])
 
+    def validate_username(form, field):
+        user = current_users.get_user(field.data)
+        if not user:
+            raise ValidationError('This username does not exist')
+
     def validate_old_password(form, field):
         user = current_users.get_user(form.username.data)
         if not user:
