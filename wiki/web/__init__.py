@@ -26,6 +26,7 @@ def get_users():
         users = g._users = UserManager(current_app.config['USER_DIR'])
     return users
 
+
 current_users = LocalProxy(get_users)
 
 

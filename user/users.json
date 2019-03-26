@@ -12,5 +12,12 @@
     "password": "1234",
     "authenticated": true,
     "roles": []
+  },
+  "test_wyatt": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "test_1",
+    "authenticated": true,
+    "roles": []
   }
 }
