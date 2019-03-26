@@ -23,9 +23,6 @@ from wiki.web import current_wiki
 from wiki.web import current_users
 from wiki.web.user import protect
 
-from flask import g
-
-
 bp = Blueprint('wiki', __name__)
 
 
