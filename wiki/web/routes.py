@@ -134,11 +134,15 @@ def search():
 def preferences():
     form = ChangePasswordForm()
     if form.validate_on_submit():
-        user = current_users.get_user(form.username.data)
-        user.set('password', form.verify_new.data)
+        change_password(form.username.data, form.verify_new.data)
         flash('Password changed successfully', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
     return render_template('preferences.html', user=current_user, form=form)
+
+
+def change_password(username, password):
+    user = current_users.get_user(username)
+    user.set('password', password)
 
 
 @bp.route('/user/login/', methods=['GET', 'POST'])

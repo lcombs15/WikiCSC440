@@ -16,7 +16,14 @@
   "test_wyatt": {
     "active": true,
     "authentication_method": "cleartext",
-    "password": "test_1",
+    "password": "butt",
+    "authenticated": true,
+    "roles": []
+  },
+  "testing_user": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "temporary",
     "authenticated": true,
     "roles": []
   }
