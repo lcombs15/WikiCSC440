@@ -2,6 +2,8 @@
     Routes
     ~~~~~~
 """
+from copy import deepcopy
+
 from flask import Blueprint
 from flask import flash
 from flask import redirect
@@ -14,14 +16,14 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from wiki.core import Processor
+from wiki.web import current_users
+from wiki.web import current_wiki
+from wiki.web.archive import archive
 from wiki.web.forms import EditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
-from wiki.web import current_wiki
-from wiki.web import current_users
 from wiki.web.user import protect
-
 
 bp = Blueprint('wiki', __name__)
 
@@ -67,7 +69,11 @@ def edit(url):
     if form.validate_on_submit():
         if not page:
             page = current_wiki.get_bare(url)
+
+        original_page = deepcopy(page)
         form.populate_obj(page)
+        if original_page.html != page.html:
+            archive(original_page)
         page.save()
         flash('"%s" was saved.' % page.title, 'success')
         return redirect(url_for('wiki.display', url=url))
@@ -179,4 +185,3 @@ def user_delete(user_id):
 @bp.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
-
