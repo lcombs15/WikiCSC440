@@ -18,7 +18,7 @@ from flask_login import logout_user
 from wiki.core import Processor
 from wiki.web import current_users
 from wiki.web import current_wiki
-from wiki.web.archive import archive
+from wiki.web.archive import archive, is_archived_page, get_archived_pages
 from wiki.web.forms import EditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
@@ -48,7 +48,10 @@ def index():
 @protect
 def display(url):
     page = current_wiki.get_or_404(url)
-    return render_template('page.html', page=page)
+    return render_template('page.html',
+                           page=page,
+                           is_archive_page=is_archived_page(page),
+                           archives=get_archived_pages(page))
 
 
 @bp.route('/create/', methods=['GET', 'POST'])
@@ -72,7 +75,7 @@ def edit(url):
 
         original_page = deepcopy(page)
         form.populate_obj(page)
-        if original_page.html != page.html:
+        if original_page.body != page.body or original_page.title != page.title:
             archive(original_page)
         page.save()
         flash('"%s" was saved.' % page.title, 'success')
