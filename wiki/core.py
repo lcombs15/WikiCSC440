@@ -78,7 +78,6 @@ def wikireference(text):
         text += "<br><h4>References</h4><hr>"
         next = re.compile(r'^(.*?(~\[\s*[^~]*\s*\]~.*?){0})~\[\s*[^~]*\s*\]~', re.S)
         for i, ref in enumerate(references):
-            print(f"{i} {ref}")
             text = re.sub(next, r'\1<small>[' + str(i + 1) + r']</small>', text)
             text += (f"{str(i +  1)}. {ref} <br>")
 
