@@ -81,18 +81,18 @@ def wikireference(text):
 
     :return: The processed text with a references section at the bottom
     """
-    reference_regex = re.compile(
-        r"~\[\s*[^~]*\s*\]~"
-    )
+    reference_regex = re.compile(r"~\[\s*[^~]*\s*\]~")
     references = []
+
     for ref in reference_regex.findall(text):
         references.append(ref[2:-2].strip().lstrip())
 
     if len(references) > 0:
         text += "<br><h4>References</h4><hr>"
-        next = re.compile(r'^(.*?(~\[\s*[^~]*\s*\]~.*?){0})~\[\s*[^~]*\s*\]~', re.S)
+        nextRef = re.compile(r'^(.*?(~\[\s*[^~]*\s*\]~.*?){0})~\[\s*[^~]*\s*\]~', re.S)
+
         for i, ref in enumerate(references):
-            text = re.sub(next, r'\1<small>[' + str(i + 1) + r']</small>', text)
+            text = re.sub(nextRef, r'\1<small>[' + str(i + 1) + r']</small>', text)
             text += (f"{str(i +  1)}. {ref} <br>")
 
     return text
