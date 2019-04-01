@@ -66,6 +66,23 @@ def wikilink(text, url_formatter=None):
         text = re.sub(link_regex, html_url, text, count=1)
     return text
 
+def wikireference(text):
+    reference_regex = re.compile(
+        r"~\[\s*[^~]*\s*\]~"
+    )
+    references = []
+    for ref in reference_regex.findall(text):
+        references.append(ref[2:-2].strip().lstrip())
+
+    if len(references) > 0:
+        text += "<br><h4>References</h4><hr>"
+        next = re.compile(r'^(.*?(~\[\s*[^~]*\s*\]~.*?){0})~\[\s*[^~]*\s*\]~', re.S)
+        for i, ref in enumerate(references):
+            print(f"{i} {ref}")
+            text = re.sub(next, r'\1<small>[' + str(i + 1) + r']</small>', text)
+            text += (f"{str(i +  1)}. {ref} <br>")
+
+    return text
 
 class Processor(object):
     """
@@ -77,7 +94,7 @@ class Processor(object):
     """
 
     preprocessors = []
-    postprocessors = [wikilink]
+    postprocessors = [wikilink, wikireference]
 
     def __init__(self, text):
         """
