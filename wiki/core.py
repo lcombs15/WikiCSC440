@@ -67,6 +67,20 @@ def wikilink(text, url_formatter=None):
     return text
 
 def wikireference(text):
+    """
+    Processes wikireference syntax "~[reference]~" within the html body.
+    Generates references to the footnotes in the text, enumerated in the
+    order in which they appear. e.g. [1] [2] ...
+    Intended to be run after markdown is processed.
+
+    :param text: The text to be processed
+
+    Sytnax:
+        Whether you're new to programming or an experienced developer,
+        it's easy to learn and use Python ~[from python.org]~.
+
+    :return: The processed text with a references section at the bottom
+    """
     reference_regex = re.compile(
         r"~\[\s*[^~]*\s*\]~"
     )
