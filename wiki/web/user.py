@@ -101,6 +101,9 @@ class User(object):
     def is_anonymous(self):
         return False
 
+    def is_darkmode(self):
+        return self.data.get('dark_mode')
+
     def get_id(self):
         return self.name
 

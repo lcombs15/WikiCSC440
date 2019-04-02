@@ -6,33 +6,59 @@
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='responsive.css') }}">
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pygments.css') }}">
 	</head>
-
-	<body>
+	<body id="body_darkmode">
+        {% if not current_user.is_anonymous == true and current_user.is_darkmode() == true %}
+            <script>
+                document.getElementById("body_darkmode").style.backgroundColor = "#424242";
+                document.getElementById("body_darkmode").style.color = "#FFFFFF";
+            </script>
+        {% endif %}
 		<div class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
-				<div class="container">
+				<div id="nav_darkmode" class="container">
+                {% if not current_user.is_anonymous == true and current_user.is_darkmode() == true %}
+                    <script>
+                        document.getElementById("nav_darkmode").style.backgroundColor = "#303030";
+                        document.getElementById("nav_darkmode").style.width = "100%";
+                        document.getElementById("nav_darkmode").style.paddingLeft = "55px";
+                    </script>
+                {% endif %}
 					<div class="row">
 						<div class="span12">
-							<a href="#" class="brand">{{ config.TITLE }}</a>
+							<a href="#" class="brand navtext_darkmode">{{ config.TITLE }}</a>
 							<ul class="nav">
-								<li><a href="{{ url_for('wiki.home') }}">Home</a></li>
-								<li><a href="{{ url_for('wiki.index') }}">Index</a></li>
-								<li><a href="{{ url_for('wiki.tags') }}">Tags</a></li>
-								<li><a href="{{ url_for('wiki.search') }}">Search</a></li>
+								<li><a class="navtext_darkmode" href="{{ url_for('wiki.home') }}">Home</a></li>
+								<li><a class="navtext_darkmode" href="{{ url_for('wiki.index') }}">Index</a></li>
+								<li><a class="navtext_darkmode" href="{{ url_for('wiki.tags') }}">Tags</a></li>
+								<li><a class="navtext_darkmode" href="{{ url_for('wiki.search') }}">Search</a></li>
 								<li class="divider-vertical"></li>
-								<li><a href="{{ url_for('wiki.create') }}">New Page</a></li>
+								<li><a class="navtext_darkmode" href="{{ url_for('wiki.create') }}">New Page</a></li>
 								<li class="divider-vertical"></li>
-								<li></li>
 							</ul>
 
 							<ul class="nav pull-right">
-								{% if current_user.is_anonymous %}
-									<li><a href="{{ url_for('wiki.user_login') }}">Login</a></li>
+								{% if current_user.is_anonymous == true %}
+									<li><a class="navtext_darkmode" href="{{ url_for('wiki.user_login') }}">Login</a></li>
 								{% else %}
-									<li><a href="{{ url_for('wiki.user_logout') }}">Logout</a></li>
+									<li><a class="navtext_darkmode" href="{{ url_for('wiki.user_logout') }}">Logout</a></li>
 								{% endif %}
-                                <li><a href="{{ url_for('wiki.preferences') }}">Preferences</a></li>
+                                <li><a class="navtext_darkmode" href="{{ url_for('wiki.preferences') }}">Preferences</a></li>
 							</ul>
+                            {% if not current_user.is_anonymous == true and current_user.is_darkmode() == true %}
+                                <script>
+                                    let navtext = document.getElementsByClassName("navtext_darkmode");
+                                    for (let i = 0; i < navtext.length; i++) {
+                                        navtext[i].style.color = "#FFFFFF";
+                                        navtext[i].style.textShadow = "none";
+                                        navtext[i].onmouseover = function() {
+                                            this.style.color = "#C0C0C0";
+                                        }
+                                        navtext[i].onmouseleave = function() {
+                                            this.style.color = "#FFFFFF";
+                                        }
+                                    }
+                                </script>
+                            {% endif %}
 						</div>
 					</div>
 				</div>
@@ -40,6 +66,8 @@
 		</div>
 
 		<div class="container">
+            {% if current_user.is_darkmode %}
+            {% endif %}
 			<div class="row">
 				<div class="span10 offset1">
 					{% block header %}

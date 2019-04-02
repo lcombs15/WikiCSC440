@@ -65,6 +65,18 @@ class ChangePasswordForm(Form):
 
     @staticmethod
     def check_passwords(username, old_password, new_password, verify_new):
+        """
+                Checks a user's current password and verifies if the user's new password is correct.
+                Examples:
+                >>> forms.check_passwords("testing_user", "temporary", "example", "example")
+                True
+
+                :param username: username of user
+                :param old_password: current password of user
+                :param new_password: new password to change to
+                :param verify_new: new password to verify the user made no mistakes
+                :return: whether the user's password was changed or not
+                """
         user = current_users.get_user(username)
         if not user:
             return False
@@ -74,7 +86,7 @@ class ChangePasswordForm(Form):
             return False
         return True
 
-    def validate_verify_new(form):
+    def validate_verify_new(form, field):
         if not ChangePasswordForm.check_passwords(form.username.data, form.old_password.data, form.new_password.data, form.verify_new.data):
             raise ValidationError("Something is not correct")
 

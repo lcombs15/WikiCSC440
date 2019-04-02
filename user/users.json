@@ -3,28 +3,32 @@
     "active": true,
     "authentication_method": "cleartext",
     "password": "1234",
-    "authenticated": true,
-    "roles": []
+    "authenticated": false,
+    "roles": [],
+    "dark_mode": false
   },
   "sam": {
     "active": true,
     "authentication_method": "cleartext",
     "password": "1234",
     "authenticated": true,
-    "roles": []
+    "roles": [],
+    "dark_mode": false
   },
   "test_wyatt": {
     "active": true,
     "authentication_method": "cleartext",
-    "password": "butt",
+    "password": "cheese",
     "authenticated": true,
-    "roles": []
+    "roles": [],
+    "dark_mode": true
   },
   "testing_user": {
     "active": true,
     "authentication_method": "cleartext",
     "password": "temporary",
-    "authenticated": true,
-    "roles": []
+    "authenticated": false,
+    "roles": [],
+    "dark_mode": false
   }
 }
