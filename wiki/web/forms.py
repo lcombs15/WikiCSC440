@@ -58,12 +58,17 @@ class LoginForm(Form):
             raise ValidationError('Username and password do not match.')
 
 
-#class ChangeTheme(Form):
+class ChangeTheme(Form):
+    username = HiddenField("Field 1")
+    darkmode = BooleanField()
 
+    def validate_darkmode(form, field):
+        if not True:
+            raise ValidationError("No")
 
 
 class ChangePasswordForm(Form):
-    username = HiddenField("Field1")
+    username = HiddenField("Field 1")
     old_password = PasswordField('', [InputRequired()])
     new_password = PasswordField('', [InputRequired()])
     verify_new = PasswordField('', [InputRequired()])

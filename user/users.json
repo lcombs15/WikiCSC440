@@ -18,15 +18,31 @@
   "test_wyatt": {
     "active": true,
     "authentication_method": "cleartext",
-    "password": "asdf",
+    "password": "scream",
     "authenticated": true,
     "roles": [],
     "dark_mode": true
   },
-  "testing_user": {
+  "testing_password": {
     "active": true,
     "authentication_method": "cleartext",
     "password": "temporary",
+    "authenticated": false,
+    "roles": [],
+    "dark_mode": false
+  },
+  "testing_darkmode_enabled": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "test",
+    "authenticated": false,
+    "roles": [],
+    "dark_mode": true
+  },
+  "testing_darkmode_disabled": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "test",
     "authenticated": false,
     "roles": [],
     "dark_mode": false

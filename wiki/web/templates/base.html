@@ -14,14 +14,17 @@
             </script>
         {% endif %}
 		<div class="navbar navbar-fixed-top">
-			<div class="navbar-inner">
+			<div id="nav_back_darkmode" class="navbar-inner">
+            {% if not current_user.is_anonymous == true and current_user.is_darkmode() == true %}
+                <script>
+                    document.getElementById("nav_back_darkmode").style.backgroundColor = "#202020";
+                    document.getElementById("nav_back_darkmode").style.backgroundImage = "none";
+                </script>
+            {% endif %}
 				<div id="nav_darkmode" class="container">
                 {% if not current_user.is_anonymous == true and current_user.is_darkmode() == true %}
                     <script>
                         document.getElementById("nav_darkmode").style.backgroundColor = "#202020";
-                        document.getElementById("nav_darkmode").style.width = "100%";
-                        document.getElementById("nav_darkmode").style.paddingLeft = "55px";
-                        //document.getElementById("nav_darkmode").style.borderBottom = "1px black";
                     </script>
                 {% endif %}
 					<div class="row">

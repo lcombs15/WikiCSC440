@@ -19,6 +19,7 @@ from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
 from wiki.web.forms import ChangePasswordForm
+from wiki.web.forms import ChangeTheme
 from wiki.web import current_wiki
 from wiki.web import current_users
 from wiki.web.user import protect
@@ -132,13 +133,22 @@ def search():
 @bp.route('/user/preferences/', methods=['GET', 'POST'])
 @protect
 def preferences():
-    return render_template('preferences.html', user=current_user)
+    form = ChangeTheme(username=current_user.name, darkmode=current_user.is_darkmode())
+    if form.validate_on_submit():
+        user = current_users.get_user(form.username.data)
+        if form.darkmode.data is True:
+            user.set('dark_mode', True)
+        else:
+            user.set('dark_mode', False)
+        return redirect(url_for('wiki.preferences'))
+
+    return render_template('preferences.html', user=current_user, form=form)
 
 
 @bp.route('/user/preferences/changepassword', methods=['GET', 'POST'])
 @protect
 def changepassword():
-    form = ChangePasswordForm(request.values, username=current_user.name)
+    form = ChangePasswordForm(username=current_user.name)
     if form.validate_on_submit():
         change_password(form.username.data, form.verify_new.data)
         flash('Password changed successfully', 'success')

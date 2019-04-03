@@ -2,13 +2,13 @@
 
 {% block title %}Preferences for {{ current_user.name }}{% endblock title %}
 {% block content %}
-    <form method="GET">
+    <form method="POST">
     <label class="switch">
-        <input onChange="setTimeout(function() {
-            form.submit();
-        }, 500)" type="checkbox" {% if current_user.is_darkmode() == true %} checked {% endif %}>
+        {{ form.hidden_tag() }}
+        {{ form.darkmode }}
         <span class="slider round"></span>
     </label>
+    <input type="submit" class="btn btn-primary" value="Apply">
     </form>
     <p><a href="{{ url_for('wiki.changepassword') }}">Change password</a></p>
 {% endblock content %}
