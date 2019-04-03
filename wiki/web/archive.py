@@ -185,6 +185,7 @@ def restore(url, root=CONTENT_DIR):
     restore_path = path.join(folder_for_current_file, current_file_name)
 
     # Make a backup for current file.md before copying over it
-    copy2(restore_path, path.join(path.dirname(backup_file_path), get_timestamped_file_name(current_file_name)))
+    if path.isfile(restore_path):
+        copy2(restore_path, path.join(path.dirname(backup_file_path), get_timestamped_file_name(current_file_name)))
     copy2(backup_file_path, restore_path)
     return get_page_url_from_path(restore_path)
