@@ -1,16 +1,14 @@
 {% extends "base.html" %}
 
 {% block title %}Preferences for {{ current_user.name }}{% endblock title %}
-
 {% block content %}
-    <form class="form form-inline" method="POST">
-        <table>
-            {{ form.hidden_tag() }}
-            <tr><td>{{ form.username(placeholder='Username') }}</td></tr>
-            <tr><td>{{ form.old_password(placeholder='Current Password') }}</td></tr>
-            <tr><td>{{ form.new_password(placeholder='New Password') }}</td></tr>
-            <tr><td>{{ form.verify_new(placeholder='Verify Password') }}</td></tr>
-            <tr><td><input type="submit" class="btn btn-primary" value="Change"></td></tr>
-        </table>
+    <form method="POST">
+    <label class="switch">
+        <input onChange="setTimeout(function() {
+            form.submit();
+        }, 400)" type="checkbox" {% if current_user.is_darkmode() == true %} checked {% endif %}>
+        <span class="slider round"></span>
+    </label>
     </form>
+    <p><a href="{{ url_for('wiki.changepassword') }}">Change password</a></p>
 {% endblock content %}

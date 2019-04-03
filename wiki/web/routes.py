@@ -132,12 +132,18 @@ def search():
 @bp.route('/user/preferences/', methods=['GET', 'POST'])
 @protect
 def preferences():
+    return render_template('preferences.html', user=current_user)
+
+
+@bp.route('/user/preferences/changepassword', methods=['GET', 'POST'])
+@protect
+def changepassword():
     form = ChangePasswordForm()
     if form.validate_on_submit():
         change_password(form.username.data, form.verify_new.data)
         flash('Password changed successfully', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
-    return render_template('preferences.html', user=current_user, form=form)
+    return render_template('changepassword.html', user=current_user, form=form)
 
 
 def change_password(username, password):

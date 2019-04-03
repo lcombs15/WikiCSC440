@@ -57,6 +57,9 @@ class LoginForm(Form):
             raise ValidationError('Username and password do not match.')
 
 
+#class ChangeTheme(Form):
+
+
 class ChangePasswordForm(Form):
     username = TextField('', [InputRequired()])
     old_password = PasswordField('', [InputRequired()])
