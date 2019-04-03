@@ -5,35 +5,24 @@ from shutil import copy2
 from config import CONTENT_DIR
 from wiki.core import Page
 
+# Default archive folder name
 ARCHIVE_FOLDER = 'archive'
-"""
-    Default archive folder name
-"""
 
+# Default number of saves to keep
 NUM_ARCHIVES_TO_KEEP = 10
-"""
-    Default number of saves to keep
-"""
 
+# For archive file names
 DEFAULT_DATE_FORMAT = "%Y_%m_%d__%H_%M_%S"
-"""
-    For archive file names
-"""
 
+# For use with GUI
 DISPLAY_DATE_FORMAT = "%d %B %Y %I:%M %p"
-"""
-    For use with GUI
-"""
 
 
 def archive(page_path):
     """
+    Makes a backup of given page P in the same directory as P under /ARCHIVE_FOLDER
 
-    :param page_path:
-    :param page:
-    :return: None
-
-        Makes a backup of given page P in the same directory as P under /ARCHIVE_FOLDER
+    :param page_path: Disk path to md file
     """
     archive_dir = get_file_archive_dir(page_path)
     makedirs(archive_dir, exist_ok=True)
@@ -42,34 +31,30 @@ def archive(page_path):
 
 def get_file_archive_dir(file_path):
     """
-
-    :param file_path:
-    :return: archive_dir_string
-
     Given path to page .md file, returns the destination directory for all archives of file_path
+
+    :param file_path: Path on disk
+    :return: archive_dir_string
     """
     return path.join(path.dirname(file_path), ARCHIVE_FOLDER, remove_file_extension(path.basename(file_path)))
 
 
 def get_timestamped_file_name(file_name):
     """
-
-    :param file_name:
-    :return: string_stamp_file
-
     Given README.md, returns 2019_04_02__23_00_04.md
+
+    :param file_name: No path, just file name
+    :return string_stamp_file:  2019_04_02__23_00_04.<file_ext>
     """
     return datetime.now().strftime(DEFAULT_DATE_FORMAT) + get_file_extension(file_name)
 
 
 def is_archived_page(page, archive_path=ARCHIVE_FOLDER):
     """
-
-    :param page:
-    :param archive_path: (optional)
-    :return: boolean_is_archive
-
     Returns true if page.path contains archive_path
+    :param page: Wiki Page object
+    :param archive_path: (optional) Archive sub-directory
+    :return: boolean_is_archive
     """
     is_archive_page = False
     head = None
@@ -84,12 +69,9 @@ def is_archived_page(page, archive_path=ARCHIVE_FOLDER):
 
 def purge_old_pages(page, num_to_keep=NUM_ARCHIVES_TO_KEEP):
     """
-
-    :param page:
-    :param num_to_keep:
-    :return: None
-
-    Only keep <num_to_keep> must recent archives
+    Only keep <num_to_keep> most recent archives
+    :param page: Wiki Page object
+    :param num_to_keep: (optional) Number of saves to preserve (delete the rest)
     """
     archive_dir = get_file_archive_dir(page.path)
 
@@ -103,11 +85,9 @@ def purge_old_pages(page, num_to_keep=NUM_ARCHIVES_TO_KEEP):
 
 def get_archived_pages(page):
     """
-
-    :param page:
-    :return: page[]
-
     Given page P, returns array of archive pages for P
+    :param page: Wiki Page Object
+    :return: page[] - Array of wiki page objects in archive
     """
     purge_old_pages(page)
     pages = []
@@ -124,12 +104,10 @@ def get_archived_pages(page):
 
 def get_page_url_from_path(file_path, root=CONTENT_DIR):
     """
-
-    :param file_path:
-    :param root:
-    :return string_URL:
-
     Given file path on disk, returns web accessible URL
+    :param file_path: String path on disk
+    :param root: Base content directory with all .md
+    :return string_URL: String wiki url to <file_path>
     """
     head = ""
     tail = path.dirname(file_path)
@@ -142,12 +120,12 @@ def get_page_url_from_path(file_path, root=CONTENT_DIR):
 
 def remove_file_extension(file_name):
     """
-    :param file_name:
-    :return: base_file_name
+    :param file_name: File name without path
+    :return: String extension-less file
 
-    > remove_file_extension("index.html")
+    >>> remove_file_extension("index.html")
     index
-    > remove_file_extension("readme.md")
+    >>> remove_file_extension("readme.md")
     readme
     """
     return path.splitext(file_name)[0]
@@ -155,8 +133,8 @@ def remove_file_extension(file_name):
 
 def get_file_extension(file_name):
     """
-    :param file_name:
-    :return: file_ext
+    :param file_name: String file name without path
+    :return: file_ext - String extension only of <file_name>
 
     > get_file_extension("File.txt")
     .txt
@@ -168,16 +146,11 @@ def get_file_extension(file_name):
 
 def restore(url, root=CONTENT_DIR):
     """
-
-    :param url:
-    :param root:
-    :return: None
-
-    Given url: /pages/home
-
     on Disk:
         - Archive //content//pages/home.md
         - Copy requested restore point into prod: //content//pages/home.md
+    :param url: String ; /pages/home
+    :param root: On Disk base directory for wiki content
     """
     backup_file_path = path.join(root, url + ".md")
     folder_for_current_file = path.join(root, path.dirname(path.dirname(path.dirname(url))))
