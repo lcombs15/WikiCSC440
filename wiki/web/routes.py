@@ -18,7 +18,7 @@ from flask_login import logout_user
 from wiki.core import Processor
 from wiki.web import current_users
 from wiki.web import current_wiki
-from wiki.web.archive import archive, is_archived_page, get_archived_pages
+from wiki.web.archive import archive, is_archived_page, get_archived_pages, restore as restore_page
 from wiki.web.forms import EditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
@@ -76,7 +76,7 @@ def edit(url):
         original_page = deepcopy(page)
         form.populate_obj(page)
         if original_page.body != page.body or original_page.title != page.title:
-            archive(original_page)
+            archive(original_page.path)
         page.save()
         flash('"%s" was saved.' % page.title, 'success')
         return redirect(url_for('wiki.display', url=url))
@@ -148,6 +148,11 @@ def user_login():
         flash('Login successful.', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
     return render_template('login.html', form=form)
+
+
+@bp.route("/RESTORE_PAGE/<path:url>")
+def restore(url):
+    return redirect("/" + restore_page(url))
 
 
 @bp.route('/user/logout/')
