@@ -18,7 +18,7 @@
   "test_wyatt": {
     "active": true,
     "authentication_method": "cleartext",
-    "password": "fdf",
+    "password": "asdf",
     "authenticated": true,
     "roles": [],
     "dark_mode": true

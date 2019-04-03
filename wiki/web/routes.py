@@ -138,7 +138,7 @@ def preferences():
 @bp.route('/user/preferences/changepassword', methods=['GET', 'POST'])
 @protect
 def changepassword():
-    form = ChangePasswordForm()
+    form = ChangePasswordForm(request.values, username=current_user.name)
     if form.validate_on_submit():
         change_password(form.username.data, form.verify_new.data)
         flash('Password changed successfully', 'success')

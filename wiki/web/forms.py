@@ -7,6 +7,7 @@ from wtforms import BooleanField
 from wtforms import TextField
 from wtforms import TextAreaField
 from wtforms import PasswordField
+from wtforms import HiddenField
 from wtforms.validators import InputRequired
 from wtforms.validators import ValidationError
 
@@ -60,37 +61,38 @@ class LoginForm(Form):
 #class ChangeTheme(Form):
 
 
+
 class ChangePasswordForm(Form):
-    username = TextField('', [InputRequired()])
+    username = HiddenField("Field1")
     old_password = PasswordField('', [InputRequired()])
     new_password = PasswordField('', [InputRequired()])
     verify_new = PasswordField('', [InputRequired()])
 
     @staticmethod
-    def check_passwords(username, old_password, new_password, verify_new):
+    def check_new_passwords(new_password, verify_new):
         """
                 Checks a user's current password and verifies if the user's new password is correct.
                 Examples:
-                >>> forms.check_passwords("testing_user", "temporary", "example", "example")
+                >>> ChangePasswordForm.check_new_passwords("example", "example")
                 True
 
-                :param username: username of user
-                :param old_password: current password of user
                 :param new_password: new password to change to
                 :param verify_new: new password to verify the user made no mistakes
-                :return: whether the user's password was changed or not
+                :return: whether the two new passwords match or not
                 """
-        user = current_users.get_user(username)
-        if not user:
-            return False
-        if not user.check_password(old_password):
-            return False
         if new_password != verify_new:
             return False
         return True
 
+    def validate_old_password(form, field):
+        user = current_users.get_user(form.username.data)
+        if not user:
+            return
+        if not user.check_password(field.data):
+            raise ValidationError('Username and password do not match.')
+
     def validate_verify_new(form, field):
-        if not ChangePasswordForm.check_passwords(form.username.data, form.old_password.data, form.new_password.data, form.verify_new.data):
+        if not ChangePasswordForm.check_new_passwords(form.new_password.data, form.verify_new.data):
             raise ValidationError("Something is not correct")
 
 

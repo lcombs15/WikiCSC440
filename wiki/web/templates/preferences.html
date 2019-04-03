@@ -2,11 +2,11 @@
 
 {% block title %}Preferences for {{ current_user.name }}{% endblock title %}
 {% block content %}
-    <form method="POST">
+    <form method="GET">
     <label class="switch">
         <input onChange="setTimeout(function() {
             form.submit();
-        }, 400)" type="checkbox" {% if current_user.is_darkmode() == true %} checked {% endif %}>
+        }, 500)" type="checkbox" {% if current_user.is_darkmode() == true %} checked {% endif %}>
         <span class="slider round"></span>
     </label>
     </form>
