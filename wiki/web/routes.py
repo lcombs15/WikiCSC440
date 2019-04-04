@@ -21,6 +21,8 @@ from wiki.web.forms import URLForm
 from wiki.web import current_wiki
 from wiki.web import current_users
 from wiki.web.user import protect
+from wiki.web.sudoku import SudokuGame
+from wiki.web.sudoku_gen import generate_sudoku, backtrack
 
 
 bp = Blueprint('wiki', __name__)
@@ -33,6 +35,25 @@ def home():
     if page:
         return display('home')
     return render_template('home.html')
+
+
+@bp.route('/sudoku/', methods=['GET', 'POST'])
+@protect
+def sudoku():
+    post = request.form
+
+    if len(post) != 0:
+        board = []
+        for i in range(0, 9):
+            row = []
+            for j in range(0, 9):
+                row.append(int(post[str(i) + str(j)]))
+            board.append(row)
+    else:
+        board = generate_sudoku(9)
+
+    game = SudokuGame(board)
+    return render_template('sudoku.html', form=game)
 
 
 @bp.route('/index/')
