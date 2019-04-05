@@ -1,4 +1,7 @@
 class SudokuGame():
+    """
+    Game of sudoku with a game board and solution checker
+    """
     BOARD_SIZE = 9
 
     def __init__(self, board):
@@ -6,6 +9,10 @@ class SudokuGame():
         self.isSolved = self.solved()
 
     def solved(self):
+        """
+        Checks if the game board has been solved
+        :return: True if solved, False otherwise
+        """
         def check_rows():
             for row in self.board:
                 if len(set(row)) != self.BOARD_SIZE:
@@ -29,9 +36,3 @@ class SudokuGame():
             return True
 
         return check_columns() and check_rows() and check_squares()
-
-    def __repr__(self):
-        for row in self.board:
-            for column in row:
-                print(column, end=" ")
-            print()

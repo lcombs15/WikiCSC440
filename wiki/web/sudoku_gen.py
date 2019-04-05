@@ -3,6 +3,7 @@ from random import shuffle, randint
 solution = None
 BOARD_SIZE = 9
 
+
 def copy_board(board):
     return [row[:] for row in board]
 
@@ -69,11 +70,11 @@ def solve(board, spots, x):
     board[i][j] = x
 
     is_board_valid = check_rows(board) and check_cols(board) and check_sub_boards(board)
-    if is_board_valid == False:
+    if not is_board_valid:
         return
 
     is_board_solved = check_solution(board)
-    if is_board_solved == True:
+    if is_board_solved:
         solution = board
         return
 
@@ -83,6 +84,12 @@ def solve(board, spots, x):
 
 
 def backtrack(board):
+    """
+    Solves a Sudoku board
+
+    :param board: [[int]] array representing board to be solved
+    :return: [[int]] array representing solved board
+    """
     spots = []
     for i in range(BOARD_SIZE):
         for j in range(BOARD_SIZE):
@@ -94,7 +101,15 @@ def backtrack(board):
 
     return solution
 
+
 def generate_sudoku(size):
+    """
+    Generates a solvable sudoku board by removing numbers from a
+    pseudo-random solution.
+
+    :param size: number of rows and columns
+    :return: [[int]] representation of a valid sudoku board
+    """
     global solution
     solution = None
     board = []

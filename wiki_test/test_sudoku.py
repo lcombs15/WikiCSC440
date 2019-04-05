@@ -1,5 +1,5 @@
 from wiki.web.sudoku import SudokuGame
-from wiki.web.sudoku_gen import generate_sudoku, backtrack
+from wiki.web.sudoku_gen import backtrack, check_rows, check_cols, check_sub_boards, generate_sudoku
 
 import unittest
 
@@ -41,6 +41,11 @@ class TestSudoku(unittest.TestCase):
         for row in board:
             for col in row:
                 self.assertNotEqual(col, 0)
+
+    def test_generate_board(self):
+        board = generate_sudoku(9)
+        self.assertTrue(check_sub_boards(board) and check_cols(board) and check_rows(board))
+
 
 if __name__ == "__main__":
     unittest.main()
