@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Sudoku{% endblock title %}
+
+{% block content %}
+<form method="POST">
+    <table style="float: left" id="grid">
+        <input type="hidden" name="board" value="{{ form.board }}">
+        {% for row in form.board %}
+            {% set outer = loop.index %}
+        <tr>
+            {% for col in row %}
+                <td><input style="width: 20px" name="{{ (outer - 1)|string + (loop.index - 1)|string }}" type="text" value="{{ col }}"/></td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="Check Solution"/>
+    {% if form.isSolved %}
+        <h4>Solved</h4>
+    {% else %}
+        <h4>Not Solved</h4>
+    {% endif %}
+</form>
+{% endblock content %}
