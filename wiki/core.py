@@ -66,6 +66,36 @@ def wikilink(text, url_formatter=None):
         text = re.sub(link_regex, html_url, text, count=1)
     return text
 
+def wikireference(text):
+    """
+    Processes wikireference syntax "~[reference]~" within the html body.
+    Generates references to the footnotes in the text, enumerated in the
+    order in which they appear. e.g. [1] [2] ...
+    Intended to be run after markdown is processed.
+
+    :param text: The text to be processed
+
+    Sytnax:
+        Whether you're new to programming or an experienced developer,
+        it's easy to learn and use Python ~[from python.org]~.
+
+    :return: The processed text with a references section at the bottom
+    """
+    reference_regex = re.compile(r"~\[\s*[^~]*\s*\]~")
+    references = []
+
+    for ref in reference_regex.findall(text):
+        references.append(ref[2:-2].strip().lstrip())
+
+    if len(references) > 0:
+        text += "<br><h4>References</h4><hr>"
+        nextRef = re.compile(r'^(.*?(~\[\s*[^~]*\s*\]~.*?){0})~\[\s*[^~]*\s*\]~', re.S)
+
+        for i, ref in enumerate(references):
+            text = re.sub(nextRef, r'\1<small>[' + str(i + 1) + r']</small>', text)
+            text += (f"{str(i +  1)}. {ref} <br>")
+
+    return text
 
 class Processor(object):
     """
@@ -77,7 +107,7 @@ class Processor(object):
     """
 
     preprocessors = []
-    postprocessors = [wikilink]
+    postprocessors = [wikilink, wikireference]
 
     def __init__(self, text):
         """

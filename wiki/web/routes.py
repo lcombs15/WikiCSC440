@@ -2,30 +2,35 @@
     Routes
     ~~~~~~
 """
+import os
+from copy import deepcopy
+
 from flask import Blueprint
 from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
-from flask import url_for
 from flask import send_file
+from flask import url_for
 from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
 
-from wiki.core import Processor
 from wiki.core import File
+from wiki.core import Processor
+from wiki.web import current_users
+from wiki.web import current_wiki
+from wiki.web.archive import archive, is_archived_page, get_archived_pages, restore as restore_page
+from wiki.web.forms import ChangePasswordForm
+from wiki.web.forms import ChangeTheme
 from wiki.web.forms import EditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
-#from wiki.web.forms import UploadForm
-from wiki.web import current_wiki
-from wiki.web import current_users
+from wiki.web.sudoku import SudokuGame
+from wiki.web.sudoku_gen import generate_sudoku
 from wiki.web.user import protect
-
-import os
 
 bp = Blueprint('wiki', __name__)
 
@@ -39,6 +44,25 @@ def home():
     return render_template('home.html')
 
 
+@bp.route('/sudoku/', methods=['GET', 'POST'])
+@protect
+def sudoku():
+    post = request.form
+
+    if len(post) != 0:
+        board = []
+        for i in range(0, 9):
+            row = []
+            for j in range(0, 9):
+                row.append(int(post[str(i) + str(j)]))
+            board.append(row)
+    else:
+        board = generate_sudoku(9)
+
+    game = SudokuGame(board)
+    return render_template('sudoku.html', form=game)
+
+
 @bp.route('/index/')
 @protect
 def index():
@@ -50,7 +74,10 @@ def index():
 @protect
 def display(url):
     page = current_wiki.get_or_404(url)
-    return render_template('page.html', page=page)
+    return render_template('page.html',
+                           page=page,
+                           is_archive_page=is_archived_page(page),
+                           archives=get_archived_pages(page))
 
 
 @bp.route('/create/', methods=['GET', 'POST'])
@@ -71,7 +98,11 @@ def edit(url):
     if form.validate_on_submit():
         if not page:
             page = current_wiki.get_bare(url)
+
+        original_page = deepcopy(page)
         form.populate_obj(page)
+        if original_page.body != page.body or original_page.title != page.title:
+            archive(original_page.path)
         page.save()
         flash('"%s" was saved.' % page.title, 'success')
         return redirect(url_for('wiki.display', url=url))
@@ -133,6 +164,38 @@ def search():
     return render_template('search.html', form=form, search=None)
 
 
+@bp.route('/user/preferences/', methods=['GET', 'POST'])
+@protect
+def preferences():
+    """
+    Displays the Preferences page where users can change the theme of the page and update their password
+
+    :return: preferences.html template
+    """
+    form = ChangeTheme(username=current_user.name, darkmode=current_user.is_darkmode())
+    if request.method == 'POST':
+        user = current_users.get_user(form.username.data)
+        user.set('dark_mode', form.darkmode.data)
+        return redirect(url_for('wiki.preferences'))
+
+    return render_template('preferences.html', user=current_user, form=form)
+
+
+@bp.route('/user/preferences/changepassword', methods=['GET', 'POST'])
+@protect
+def changepassword():
+    """
+    Displays the page where users can update their password
+
+    :return: changepassword.html template
+    """
+    form = ChangePasswordForm(username=current_user.name)
+    if form.validate_on_submit():
+        flash('Password changed successfully', 'success')
+        return redirect(request.args.get("next") or url_for('wiki.index'))
+    return render_template('changepassword.html', user=current_user, form=form)
+
+
 @bp.route('/user/login/', methods=['GET', 'POST'])
 def user_login():
     form = LoginForm()
@@ -143,6 +206,11 @@ def user_login():
         flash('Login successful.', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
     return render_template('login.html', form=form)
+
+
+@bp.route("/RESTORE_PAGE/<path:url>")
+def restore(url):
+    return redirect("/" + restore_page(url))
 
 
 @bp.route('/user/logout/')
@@ -173,7 +241,8 @@ def user_admin(user_id):
 def user_delete(user_id):
     pass
 
-@bp.route('/files/',  methods=['GET', 'POST'])
+
+@bp.route('/files/', methods=['GET', 'POST'])
 @protect
 def files():
     """
@@ -203,6 +272,7 @@ def files():
         files_list.append(filename)
     return render_template('files.html', files=files_list)
 
+
 @bp.route('/return-file/<path:url>/')
 @protect
 def return_file(url):
@@ -215,6 +285,7 @@ def return_file(url):
     file_path = os.path.abspath('./content/files/%s' % url)
     return send_file(file_path)
 
+
 """
     Error Handlers
     ~~~~~~~~~~~~~~
@@ -224,4 +295,3 @@ def return_file(url):
 @bp.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
-
