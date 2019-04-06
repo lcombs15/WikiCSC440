@@ -67,13 +67,15 @@ def create():
 @protect
 def rssfeed():
     form = RssfeedForm()
-    rssdata = []
-    channeltitle = ''
     if form.validate_on_submit():
         # save rssurl in file
         rssurl = form.rssurl.data
-        rssdata = get_rss_data(rssurl)
-        channeltitle = get_feed_title(rssurl)
+        if (get_feed_title(rssurl) != "PLEASE PROVIDE A DIFFERENT RSS FEED URL"):
+            current_user.set('rssurl', rssurl)
+    form.rssurl.data = current_user.get('rssurl')
+    rssurl = form.rssurl.data
+    rssdata = get_rss_data(rssurl)
+    channeltitle = get_feed_title(rssurl)
 
     return render_template('rssfeed.html', form=form, rssdata=rssdata, channeltitle=channeltitle)
 
