@@ -6,7 +6,7 @@ from wiki.web.user import UserManager
 class TestUserPreferences(unittest.TestCase):
 
     def setUp(self):
-        self.sut = UserManager(os.path.abspath('./Tests')).get_user("testing_user")
+        self.sut = UserManager(os.path.abspath('./wiki_test')).get_user("testing_user")
         self.sut.set('password', "test")
         self.sut.set('dark_mode', False)
 

@@ -2,6 +2,8 @@
     Routes
     ~~~~~~
 """
+from copy import deepcopy
+
 from flask import Blueprint
 from flask import flash
 from flask import redirect
@@ -14,6 +16,7 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from wiki.core import Processor
+from wiki.web.archive import archive, is_archived_page, get_archived_pages, restore as restore_page
 from wiki.web.forms import EditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
@@ -23,6 +26,8 @@ from wiki.web.forms import ChangeTheme
 from wiki.web import current_wiki
 from wiki.web import current_users
 from wiki.web.user import protect
+from wiki.web.sudoku import SudokuGame
+from wiki.web.sudoku_gen import generate_sudoku, backtrack
 
 bp = Blueprint('wiki', __name__)
 
@@ -36,6 +41,25 @@ def home():
     return render_template('home.html')
 
 
+@bp.route('/sudoku/', methods=['GET', 'POST'])
+@protect
+def sudoku():
+    post = request.form
+
+    if len(post) != 0:
+        board = []
+        for i in range(0, 9):
+            row = []
+            for j in range(0, 9):
+                row.append(int(post[str(i) + str(j)]))
+            board.append(row)
+    else:
+        board = generate_sudoku(9)
+
+    game = SudokuGame(board)
+    return render_template('sudoku.html', form=game)
+
+
 @bp.route('/index/')
 @protect
 def index():
@@ -47,7 +71,10 @@ def index():
 @protect
 def display(url):
     page = current_wiki.get_or_404(url)
-    return render_template('page.html', page=page)
+    return render_template('page.html',
+                           page=page,
+                           is_archive_page=is_archived_page(page),
+                           archives=get_archived_pages(page))
 
 
 @bp.route('/create/', methods=['GET', 'POST'])
@@ -68,7 +95,11 @@ def edit(url):
     if form.validate_on_submit():
         if not page:
             page = current_wiki.get_bare(url)
+
+        original_page = deepcopy(page)
         form.populate_obj(page)
+        if original_page.body != page.body or original_page.title != page.title:
+            archive(original_page.path)
         page.save()
         flash('"%s" was saved.' % page.title, 'success')
         return redirect(url_for('wiki.display', url=url))
@@ -174,6 +205,11 @@ def user_login():
     return render_template('login.html', form=form)
 
 
+@bp.route("/RESTORE_PAGE/<path:url>")
+def restore(url):
+    return redirect("/" + restore_page(url))
+
+
 @bp.route('/user/logout/')
 @login_required
 def user_logout():
@@ -212,4 +248,3 @@ def user_delete(user_id):
 @bp.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
-
