@@ -126,21 +126,18 @@ class User(object):
             raise NotImplementedError(authentication_method)
         return result
 
-    def set_password(self, password):
+    def set_password(self, new_password, verify_new):
         """
-        Changes user's password to provided one
+        Changes the user's password if new_password and verify_new are the same.
 
-        :param password: password to change to
+        :param new_password: new password to change to
+        :param verify_new: new password again to verify that it was typed in correctly
+        :return: True if password was changed, False otherwise
         """
-        self.set('password', password)
-
-    def toggle_darkmode(self, darkmode):
-        """
-        Changes user's theme between light and dark mode
-
-        :param darkmode: boolean, true to set to dark mode
-        """
-        self.set('dark_mode', darkmode)
+        if new_password == verify_new:
+            self.set('password', verify_new)
+            return True
+        return False
 
 
 def get_default_authentication_method():

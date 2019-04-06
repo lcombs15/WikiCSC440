@@ -133,10 +133,15 @@ def search():
 @bp.route('/user/preferences/', methods=['GET', 'POST'])
 @protect
 def preferences():
+    """
+    Displays the Preferences page where users can change the theme of the page and update their password
+
+    :return: preferences.html template
+    """
     form = ChangeTheme(username=current_user.name, darkmode=current_user.is_darkmode())
     if request.method == 'POST':
         user = current_users.get_user(form.username.data)
-        user.toggle_darkmode(form.darkmode.data)
+        user.set('dark_mode', form.darkmode.data)
         return redirect(url_for('wiki.preferences'))
 
     return render_template('preferences.html', user=current_user, form=form)
@@ -145,10 +150,13 @@ def preferences():
 @bp.route('/user/preferences/changepassword', methods=['GET', 'POST'])
 @protect
 def changepassword():
+    """
+    Displays the page where users can update their password
+
+    :return: changepassword.html template
+    """
     form = ChangePasswordForm(username=current_user.name)
     if form.validate_on_submit():
-        user = current_users.get_user(form.username.data)
-        user.set_password(form.verify_new.data)
         flash('Password changed successfully', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
     return render_template('changepassword.html', user=current_user, form=form)

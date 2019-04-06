@@ -69,19 +69,6 @@ class ChangePasswordForm(Form):
     new_password = PasswordField('', [InputRequired()])
     verify_new = PasswordField('', [InputRequired()])
 
-    @staticmethod
-    def check_new_passwords(new_password, verify_new):
-        """
-                Checks a user's current password and verifies if the user's new password is correct.
-
-                :param new_password: new password to change to
-                :param verify_new: new password to verify the user made no mistakes
-                :return: whether the two new passwords match or not
-                """
-        if new_password != verify_new:
-            return False
-        return True
-
     def validate_old_password(form, field):
         user = current_users.get_user(form.username.data)
         if not user:
@@ -90,8 +77,9 @@ class ChangePasswordForm(Form):
             raise ValidationError('Username and password do not match.')
 
     def validate_verify_new(form, field):
-        if not ChangePasswordForm.check_new_passwords(form.new_password.data, form.verify_new.data):
-            raise ValidationError("Something is not correct")
+        user = current_users.get_user(form.username.data)
+        if user.check_password(form.old_password.data) is False or user.set_password(form.new_password.data, form.verify_new.data) is False:
+            raise ValidationError("New passwords did not match")
 
 
 
