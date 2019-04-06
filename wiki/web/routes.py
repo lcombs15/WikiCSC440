@@ -134,12 +134,9 @@ def search():
 @protect
 def preferences():
     form = ChangeTheme(username=current_user.name, darkmode=current_user.is_darkmode())
-    if form.validate_on_submit():
+    if request.method == 'POST':
         user = current_users.get_user(form.username.data)
-        if form.darkmode.data is True:
-            user.set('dark_mode', True)
-        else:
-            user.set('dark_mode', False)
+        user.toggle_darkmode(form.darkmode.data)
         return redirect(url_for('wiki.preferences'))
 
     return render_template('preferences.html', user=current_user, form=form)
@@ -150,15 +147,11 @@ def preferences():
 def changepassword():
     form = ChangePasswordForm(username=current_user.name)
     if form.validate_on_submit():
-        change_password(form.username.data, form.verify_new.data)
+        user = current_users.get_user(form.username.data)
+        user.set_password(form.verify_new.data)
         flash('Password changed successfully', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
     return render_template('changepassword.html', user=current_user, form=form)
-
-
-def change_password(username, password):
-    user = current_users.get_user(username)
-    user.set('password', password)
 
 
 @bp.route('/user/login/', methods=['GET', 'POST'])

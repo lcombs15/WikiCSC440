@@ -62,10 +62,6 @@ class ChangeTheme(Form):
     username = HiddenField("Field 1")
     darkmode = BooleanField()
 
-    def validate_darkmode(form, field):
-        if not True:
-            raise ValidationError("No")
-
 
 class ChangePasswordForm(Form):
     username = HiddenField("Field 1")
@@ -77,9 +73,6 @@ class ChangePasswordForm(Form):
     def check_new_passwords(new_password, verify_new):
         """
                 Checks a user's current password and verifies if the user's new password is correct.
-                Examples:
-                >>> ChangePasswordForm.check_new_passwords("example", "example")
-                True
 
                 :param new_password: new password to change to
                 :param verify_new: new password to verify the user made no mistakes

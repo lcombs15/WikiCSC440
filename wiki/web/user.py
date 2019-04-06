@@ -12,7 +12,6 @@ from flask import current_app
 from flask_login import current_user
 
 
-
 class UserManager(object):
     """A very simple user Manager, that saves it's data as json."""
     def __init__(self, path):
@@ -102,6 +101,11 @@ class User(object):
         return False
 
     def is_darkmode(self):
+        """
+        Retrieve's the user's theme
+
+        :return: True if the user's theme is dark mode, False otherwise
+        """
         return self.data.get('dark_mode')
 
     def get_id(self):
@@ -121,6 +125,22 @@ class User(object):
         else:
             raise NotImplementedError(authentication_method)
         return result
+
+    def set_password(self, password):
+        """
+        Changes user's password to provided one
+
+        :param password: password to change to
+        """
+        self.set('password', password)
+
+    def toggle_darkmode(self, darkmode):
+        """
+        Changes user's theme between light and dark mode
+
+        :param darkmode: boolean, true to set to dark mode
+        """
+        self.set('dark_mode', darkmode)
 
 
 def get_default_authentication_method():

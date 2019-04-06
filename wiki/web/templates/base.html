@@ -22,11 +22,6 @@
                 </script>
             {% endif %}
 				<div id="nav_darkmode" class="container">
-                {% if not current_user.is_anonymous == true and current_user.is_darkmode() == true %}
-                    <script>
-                        document.getElementById("nav_darkmode").style.backgroundColor = "#202020";
-                    </script>
-                {% endif %}
 					<div class="row">
 						<div class="span12">
 							<a href="#" class="brand navtext_darkmode">{{ config.TITLE }}</a>
@@ -70,8 +65,6 @@
 		</div>
 
 		<div class="container">
-            {% if current_user.is_darkmode %}
-            {% endif %}
 			<div class="row">
 				<div class="span10 offset1">
 					{% block header %}

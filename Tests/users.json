@@ -1,0 +1,10 @@
+{
+  "testing_user": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "test",
+    "authenticated": false,
+    "roles": [],
+    "dark_mode": false
+  }
+}
