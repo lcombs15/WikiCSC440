@@ -2,6 +2,7 @@
     Routes
     ~~~~~~
 """
+import os
 from copy import deepcopy
 
 from flask import Blueprint
@@ -9,25 +10,27 @@ from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import send_file
 from flask import url_for
 from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
 
+from wiki.core import File
 from wiki.core import Processor
+from wiki.web import current_users
+from wiki.web import current_wiki
 from wiki.web.archive import archive, is_archived_page, get_archived_pages, restore as restore_page
+from wiki.web.forms import ChangePasswordForm
+from wiki.web.forms import ChangeTheme
 from wiki.web.forms import EditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
-from wiki.web.forms import ChangePasswordForm
-from wiki.web.forms import ChangeTheme
-from wiki.web import current_wiki
-from wiki.web import current_users
-from wiki.web.user import protect
 from wiki.web.sudoku import SudokuGame
-from wiki.web.sudoku_gen import generate_sudoku, backtrack
+from wiki.web.sudoku_gen import generate_sudoku
+from wiki.web.user import protect
 
 bp = Blueprint('wiki', __name__)
 
@@ -237,6 +240,50 @@ def user_admin(user_id):
 @bp.route('/user/delete/<int:user_id>/')
 def user_delete(user_id):
     pass
+
+
+@bp.route('/files/', methods=['GET', 'POST'])
+@protect
+def files():
+    """
+    The user can select the files they want to save to the wiki. These files are saved to the folder named files in the
+    wiki.
+
+    :return: files.html and the list of the files saved
+    """
+
+    file = File()
+    # Gets the location of files folder
+    file_folder = os.path.abspath('./content/files/')
+    # Checks that the files folder exists and creates it if it doesn't
+    if not os.path.exists(file_folder):
+        os.makedirs(file_folder)
+    # Goes through each file uploaded by the user
+    for f in request.files.getlist('files'):
+        # Retrieves the string name of the file
+        filename = f.filename
+        # Determines where and under what name the file is savedd
+        destination = file.save_to(filename, file_folder)
+        # Saves the file to the file folder
+        f.save(destination)
+
+    files_list = []
+    for filename in os.listdir(file_folder):
+        files_list.append(filename)
+    return render_template('files.html', files=files_list)
+
+
+@bp.route('/return-file/<path:url>/')
+@protect
+def return_file(url):
+    """
+    Opens or downloads the file.
+
+    :param url: the name that the file is saved undered
+    :return: the file saved
+    """
+    file_path = os.path.abspath('./content/files/%s' % url)
+    return send_file(file_path)
 
 
 """

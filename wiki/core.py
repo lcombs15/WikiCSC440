@@ -405,3 +405,129 @@ class Wiki(object):
                     matched.append(page)
                     break
         return matched
+
+
+class File(object):
+    """
+    The File class handles where and under what name a file is saved.
+
+    """
+
+    def save_to(self, filename, file_folder):
+        """
+        Gets the full path of where the file will be stored including the file name. This is done by figuring out if 
+        there is an existing file with the same name as the current file. If there is not a file with the same name it
+        will return file_folder with the file named added to the end of the path. If there is file that has the same
+        name it will figure out what version number should be added to the name. It will then return the file_folder
+        with the revised name added to the end of the path
+
+        :param filename: The full name including the file type
+        :param file_folder: The file path for where the file will be stored
+        :return: The full path of where the file will be stored including the file name
+        """
+        # Adds the original name to the file path
+        destination = "/".join([file_folder, filename])
+        # Checks if the file name already exists
+        if os.path.exists(destination):
+            # Gets the first version of the file name
+            first_version_filename = self.get_first_version_filename(filename)
+            # Adds the first version name to the file path
+            first_version_destination = "/".join([file_folder, first_version_filename])
+            # Checks if the first version of the file name already exists
+            if os.path.exists(first_version_destination):
+                highest_version = 0
+                # Go through each file in the files folder
+                for current in os.listdir(file_folder):
+                    # Gets the file name and current type
+                    file_name, current_type = self.get_file_name_and_type(filename)
+                    # Gets the current file name without the version
+                    current_filename_without_version = self.get_filename_without_version(current)
+                    # Determines if the current file name without the version is the same as the file name
+                    if current_filename_without_version == file_name:
+                        # Gets the current files version number
+                        version_number = self.get_version_number(current)
+                        # Makes sure the version number is a digit
+                        if version_number.isdigit():
+                            # Determines if the highest version is less or equal to the version number
+                            if highest_version <= int(version_number):
+                                # Sets highest_version to the new version number plus 1
+                                highest_version = int(version_number) + 1
+                                # Gets the updated file name with the new version
+                                newest_version_filename = self.get_newest_version_filename(filename, highest_version)
+                # Returns the file path and the updated file name with the new version
+                return "/".join([file_folder, newest_version_filename])
+
+            # Returns the file path and the first version of the file name
+            return first_version_destination
+
+        # Returns the file path and the original name
+        return destination
+
+    def get_first_version_filename(self, filename):
+        """
+        Gets the the first version of the full file name including the type. By first version I mean the first time the
+        name has to be altered by version.
+
+        :param filename: The full name including the file type
+        :return: The new full file name including the type
+        """
+        file_name, file_type = self.get_file_name_and_type(filename)
+        return file_name + "[1]" + file_type
+
+    def get_version_number(self, filename):
+        """
+        Gets the version number in a file name. If there is no version number in the file name then it returns 0.
+
+        :param filename: The full name including the file type
+        :return: the string of the version number
+        """
+        file_name, file_type = self.get_file_name_and_type(filename)
+        open_bracket_index, closing_bracket_index = self.get_open_bracket_and_closing_bracket_index(file_name)
+        if open_bracket_index == -1 and closing_bracket_index == -1:
+            return '0'
+        return file_name[(open_bracket_index + 1): closing_bracket_index]
+
+    def get_filename_without_version(self, filename):
+        """
+        Gets the file name without the version if there is a version. If there is no version in the file name it returns
+        the original file name.
+
+        :param filename: The full file name including the file type
+        :return: the file name without the version
+        """
+        file_name, file_type = self.get_file_name_and_type(filename)
+        open_bracket_index, closing_bracket_index = self.get_open_bracket_and_closing_bracket_index(file_name)
+        if open_bracket_index != -1 and closing_bracket_index != -1:
+            file_name = file_name[:open_bracket_index]
+        return file_name
+
+    def get_newest_version_filename(self, filename, version_number):
+        """
+        Gets the newest version of the filename by taking the current filename and changing it to include a version of
+        file.
+
+        :param filename: The full file name including the file type
+        :param version_number: An integer for
+        :return: The new file name that includes the version
+        """
+        file_name, file_type = self.get_file_name_and_type(filename)
+        return file_name + "[" + str(version_number) + "]" + file_type
+
+    def get_file_name_and_type(self, filename):
+        """
+        Gets the file name and the file type.
+
+        :param file: The file name with the file type
+        :return: file name without the file type, file type
+        """
+        split_index = filename.rfind('.')
+        return filename[:split_index], filename[split_index:]
+
+    def get_open_bracket_and_closing_bracket_index(self, file_name):
+        """
+        Gets the indexes for the opening bracket and the closing bracket.
+
+        :param file_name: The file name without the file type
+        :return: index for the open bracket, index for the closing bracket
+        """
+        return file_name.rfind('['), file_name.rfind(']')
