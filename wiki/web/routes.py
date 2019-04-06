@@ -16,13 +16,15 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from wiki.core import Processor
-from wiki.web import current_users
-from wiki.web import current_wiki
 from wiki.web.archive import archive, is_archived_page, get_archived_pages, restore as restore_page
 from wiki.web.forms import EditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
+from wiki.web.forms import ChangePasswordForm
+from wiki.web.forms import ChangeTheme
+from wiki.web import current_wiki
+from wiki.web import current_users
 from wiki.web.user import protect
 from wiki.web.sudoku import SudokuGame
 from wiki.web.sudoku_gen import generate_sudoku, backtrack
@@ -157,6 +159,38 @@ def search():
         return render_template('search.html', form=form,
                                results=results, search=form.term.data)
     return render_template('search.html', form=form, search=None)
+
+
+@bp.route('/user/preferences/', methods=['GET', 'POST'])
+@protect
+def preferences():
+    """
+    Displays the Preferences page where users can change the theme of the page and update their password
+
+    :return: preferences.html template
+    """
+    form = ChangeTheme(username=current_user.name, darkmode=current_user.is_darkmode())
+    if request.method == 'POST':
+        user = current_users.get_user(form.username.data)
+        user.set('dark_mode', form.darkmode.data)
+        return redirect(url_for('wiki.preferences'))
+
+    return render_template('preferences.html', user=current_user, form=form)
+
+
+@bp.route('/user/preferences/changepassword', methods=['GET', 'POST'])
+@protect
+def changepassword():
+    """
+    Displays the page where users can update their password
+
+    :return: changepassword.html template
+    """
+    form = ChangePasswordForm(username=current_user.name)
+    if form.validate_on_submit():
+        flash('Password changed successfully', 'success')
+        return redirect(request.args.get("next") or url_for('wiki.index'))
+    return render_template('changepassword.html', user=current_user, form=form)
 
 
 @bp.route('/user/login/', methods=['GET', 'POST'])
