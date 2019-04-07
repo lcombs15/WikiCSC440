@@ -5,7 +5,7 @@
 <form method="POST" class="form-inline">
 	{{ form.hidden_tag() }}
 	{{ input(form.rssurl, placeholder="URL of the RSS Feed", class="span7", autocomplete="off") }}
-	<input type="submit" class="btn btn-success" value="Save RSS Feed">
+	<input type="submit" class="btn btn-success" value="update/view feed">
 </form>
     <h3>Title: {{ channeltitle }}</h3>
     <ul>
@@ -15,7 +15,3 @@
     </ul>
     </br>
 {% endblock content %}
-
-{% block sidebar %}
-<p class="alert alert-success">Thank you!</p>
-{% endblock sidebar %}

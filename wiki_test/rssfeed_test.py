@@ -17,7 +17,7 @@ class TestRssFeed(unittest.TestCase):
 
     def test_get_rss_data(self):
         rssurl = 'https://www.reddit.com/r/python/.rss'
-        self.assertEqual(3, len(get_rss_data(rssurl)[0]))
+        self.assertEqual(2, len(get_rss_data(rssurl)[0]))
 
     def test_get_bad_rss_data(self):
         rssurl = 'https://github.com/lcombs15/WikiCSC440/commits/master.atom?token=AkoYKxAmBxizsF72clfwxCdzYVN52qhcks66sSH-wA%3D%3D'
