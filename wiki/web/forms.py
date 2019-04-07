@@ -41,6 +41,10 @@ class EditorForm(Form):
     tags = TextField('')
 
 
+class RssfeedForm(Form):
+    rssurl = TextAreaField('', [InputRequired()])
+
+
 class LoginForm(Form):
     name = TextField('', [InputRequired()])
     password = PasswordField('', [InputRequired()])
