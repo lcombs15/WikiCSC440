@@ -66,6 +66,12 @@ def create():
 @bp.route('/rssfeed/', methods=['GET', 'POST'])
 @protect
 def rssfeed():
+    """
+    The user can provide the RSS Feed's url that they wish to view title/link information
+    for. To view a different RSS Feed's data they just need to enter another feed's url.
+
+    :return: rssfeed.html and the feed data that was parsed (each entry's title and link)
+    """
     form = RssfeedForm()
     if form.validate_on_submit():
         # save rssurl in file
