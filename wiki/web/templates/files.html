@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+<script>
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
+</script>
+
+{% block title %}Files{% endblock title %}
+
+{% block content %}
+    <h3>File Upload</h3>
+	<div class="span8 offset1">
+		<form name="UploadFile" class="form-inline well" method="POST" enctype='multipart/form-data'>
+            <input type="file" name="files" required multiple>
+			<input type="submit" class="btn btn-success pull-right" value="Upload">
+		</form>
+	</div>
+
+
+    <h3>Download Files</h3>
+    {%  for file in files %}
+        <li><a href="/return-file/{{ file }}">{{ file }}</a></li>
+    {% endfor %}
+    {% endblock content %}

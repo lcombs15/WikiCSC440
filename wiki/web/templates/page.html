@@ -31,8 +31,20 @@
 {% endif %}
 <h3>Actions</h3>
 <ul class="nav nav-tabs nav-stacked">
-	<li><a href="{{ url_for('wiki.edit', url=page.url) }}">Edit</a></li>
-  <li><a href="{{ url_for('wiki.move', url=page.url) }}">Move</a></li>
-  <li><a href="#confirmDelete" data-toggle="modal" class="text-error">Delete</a></li>
+{% if is_archive_page %}
+    <li><a href="/RESTORE_PAGE/{{ page.url }}">Restore this page</a></li>
+{% else %}
+    <li><a href="{{ url_for('wiki.edit', url=page.url) }}">Edit</a></li>
+    <li><a href="{{ url_for('wiki.move', url=page.url) }}">Move</a></li></li>
+{% endif %}
+  <li><a href="#confirmDelete" data-toggle="modal" class="text-error">Delete</a>
 </ul>
+    {% if not is_archive_page %}
+<h3>Archives</h3>
+    <ul>
+    {% for archive in archives %}
+        <li><a href="\{{ archive.url }}" rel="">{{archive.title}}</a></li>
+    {% endfor %}
+    </ul>
+    {% endif %}
 {% endblock sidebar %}
