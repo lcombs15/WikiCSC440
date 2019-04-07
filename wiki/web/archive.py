@@ -136,9 +136,9 @@ def get_file_extension(file_name):
     :param file_name: String file name without path
     :return: file_ext - String extension only of <file_name>
 
-    > get_file_extension("File.txt")
+    >>> get_file_extension("File.txt")
     .txt
-    > get_file_extension("home.md")
+    >>> get_file_extension("home.md")
     .md
     """
     return path.splitext(file_name)[1]
