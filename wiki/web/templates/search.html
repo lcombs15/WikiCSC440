@@ -11,10 +11,10 @@
 {% block content %}
 <div class="row">
 	<div class="span8 offset1">
-		<form id="temp" class="form-inline well" method="POST">
+		<form id="dark_mode" class="form-inline well" method="POST">
             {% if current_user.is_darkmode() == true %}
             <script>
-                document.getElementById("temp").style.backgroundColor = "#515151";
+                document.getElementById("dark_mode").style.backgroundColor = "#515151";
             </script>
             {% endif %}
 			{{ form.hidden_tag() }}
