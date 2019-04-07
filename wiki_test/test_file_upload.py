@@ -4,6 +4,9 @@ import os
 
 
 class TestFile(unittest.TestCase):
+    """
+    Various unit tests for wiki.core.File
+    """
 
     def setUp(self):
         self.file = File()
