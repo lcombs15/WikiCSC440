@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}RSS Feed{% endblock title %}
+{% block content %}
+<form method="POST" class="form-inline">
+	{{ form.hidden_tag() }}
+	{{ input(form.rssurl, placeholder="URL of the RSS Feed", class="span7", autocomplete="off") }}
+	<input type="submit" class="btn btn-success" value="Save RSS Feed">
+</form>
+    <h3>Title: {{ channeltitle }}</h3>
+    <ul>
+    {% for entry in rssdata %}
+        <li><b>{{ entry[0] }}</b>: </br> <a href="{{ entry[1] }}">{{ entry[1] }}</a> </li>
+    {% endfor %}
+    </ul>
+    </br>
+{% endblock content %}
+
+{% block sidebar %}
+<p class="alert alert-success">Thank you!</p>
+{% endblock sidebar %}

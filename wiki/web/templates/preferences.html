@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Preferences for {{ current_user.name }}{% endblock title %}
+{% block content %}
+    <form method="POST">
+    <h2>Theme</h2>
+        <p style="float: left; font-size: 18px; margin-right: 20px; margin-left: 20px">Dark Theme</p>
+    <label class="switch">
+        {{ form.hidden_tag() }}
+        {{ form.darkmode }}
+        <span class="slider round"></span>
+    </label>
+    <h2 style="margin-top: 20px">Password</h2>
+    <p style="font-size: 16px; margin-left: 20px;"><a href="{{ url_for('wiki.changepassword') }}">Change password</a></p>
+    <input type="submit" class="btn btn-success" style="margin-top: 200px" value="Apply">
+    </form>
+{% endblock content %}

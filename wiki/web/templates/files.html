@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Files{% endblock title %}
+
+{% block content %}
+    <h3>File Upload</h3>
+	<div class="span8 offset1">
+		<form id="dark_mode" name="UploadFile" class="form-inline well" method="POST" enctype='multipart/form-data'>
+            {% if current_user.is_darkmode() == true %}
+            <script>
+                document.getElementById("dark_mode").style.backgroundColor = "#515151";
+            </script>
+            {% endif %}
+            <input type="file" name="files" required multiple>
+			<input type="submit" class="btn btn-success pull-right" value="Upload">
+		</form>
+	</div>
+
+    <h3>Download Files</h3>
+    {%  for file in files %}
+        <li><a href="/return-file/{{ file }}">{{ file }}</a></li>
+    {% endfor %}
+    {% endblock content %}
