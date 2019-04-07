@@ -122,7 +122,6 @@ def edit(url):
     if form.validate_on_submit():
         if not page:
             page = current_wiki.get_bare(url)
-
         original_page = deepcopy(page)
         form.populate_obj(page)
         if original_page.body != page.body or original_page.title != page.title:
