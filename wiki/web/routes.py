@@ -120,11 +120,14 @@ def edit(url):
     page = current_wiki.get(url)
     form = EditorForm(obj=page)
     if form.validate_on_submit():
+        is_new_page = False
         if not page:
             page = current_wiki.get_bare(url)
+            is_new_page = True
+
         original_page = deepcopy(page)
         form.populate_obj(page)
-        if original_page.body != page.body or original_page.title != page.title:
+        if not is_new_page and (original_page.body != page.body or original_page.title != page.title):
             archive(original_page.path)
         page.save()
         flash('"%s" was saved.' % page.title, 'success')
