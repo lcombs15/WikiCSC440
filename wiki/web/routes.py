@@ -16,7 +16,7 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
-
+from wiki.web.rssfeed import get_rss_data, get_feed_title
 from wiki.core import File
 from wiki.core import Processor
 from wiki.web import current_users
@@ -25,6 +25,7 @@ from wiki.web.archive import archive, is_archived_page, get_archived_pages, rest
 from wiki.web.forms import ChangePasswordForm
 from wiki.web.forms import ChangeTheme
 from wiki.web.forms import EditorForm
+from wiki.web.forms import RssfeedForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
@@ -88,6 +89,29 @@ def create():
         return redirect(url_for(
             'wiki.edit', url=form.clean_url(form.url.data)))
     return render_template('create.html', form=form)
+
+
+@bp.route('/rssfeed/', methods=['GET', 'POST'])
+@protect
+def rssfeed():
+    """
+    The user can provide the RSS Feed's url that they wish to view title/link information
+    for. To view a different RSS Feed's data they just need to enter another feed's url.
+
+    :return: rssfeed.html and the feed data that was parsed (each entry's title and link)
+    """
+    form = RssfeedForm()
+    if form.validate_on_submit():
+        # save rssurl in file
+        rssurl = form.rssurl.data
+        if (get_feed_title(rssurl) != "PLEASE PROVIDE A DIFFERENT RSS FEED URL"):
+            current_user.set('rssurl', rssurl)
+    form.rssurl.data = current_user.get('rssurl')
+    rssurl = form.rssurl.data
+    rssdata = get_rss_data(rssurl)
+    channeltitle = get_feed_title(rssurl)
+
+    return render_template('rssfeed.html', form=form, rssdata=rssdata, channeltitle=channeltitle)
 
 
 @bp.route('/edit/<path:url>/', methods=['GET', 'POST'])
