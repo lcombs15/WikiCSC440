@@ -102,9 +102,9 @@ def rssfeed():
     """
     form = RssfeedForm()
     if form.validate_on_submit():
-        # save rssurl in file
         rssurl = form.rssurl.data
         if (get_feed_title(rssurl) != "PLEASE PROVIDE A DIFFERENT RSS FEED URL"):
+            # save rssurl in users.json
             current_user.set('rssurl', rssurl)
     form.rssurl.data = current_user.get('rssurl')
     rssurl = form.rssurl.data
